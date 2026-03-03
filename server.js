@@ -1,10 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { createClient } from '@supabase/supabase-js';
 import fetch from 'node-fetch';
 
 // ─── Express App ────────────────────────────────────────────────────────────
 const app = express();
+app.use(cors()); // Allow all origins — Framer, browsers, Postman
 app.use(express.json());
 
 // ─── Supabase Client ─────────────────────────────────────────────────────────

@@ -315,6 +315,70 @@ GEMINI_API_KEY=your_google_ai_studio_api_key
 
 ---
 
+## Testing the Search Locally
+
+### Option A — CLI Tool (easiest)
+
+A `search.js` script is included. Make sure the server is running (`npm start`) in a separate terminal, then:
+
+```bash
+# Basic natural language search
+node search.js "cheap apartment for one person"
+
+# With city filter
+node search.js "quiet apartment near schools" --city Abuja
+
+# With multiple filters
+node search.js "family home near schools" --bedrooms 3 --max-price 8000000 --type rent
+
+# More results
+node search.js "luxury duplex with pool" --limit 10
+
+# Hit the live Railway URL instead of localhost
+API_URL=https://pd-semantic-search-production.up.railway.app node search.js "studio flat in Lekki"
+```
+
+**Available flags:**
+
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--city` | Filter by city | `--city Lagos` |
+| `--bedrooms` | Filter by bedroom count | `--bedrooms 3` |
+| `--max-price` | Maximum price in Naira | `--max-price 5000000` |
+| `--type` | `rent` or `sale` | `--type rent` |
+| `--limit` | Number of results (default: 5) | `--limit 10` |
+
+---
+
+### Option B — curl
+
+```bash
+# Basic search
+curl -X POST http://localhost:3000/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "3 bedroom apartment in Abuja near schools under 5 million"}'
+
+# With filters
+curl -X POST http://localhost:3000/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "cheap apartment for a single person",
+    "bedrooms": 1,
+    "max_price": 1500000,
+    "city": "Abuja",
+    "listing_type": "rent"
+  }'
+
+# Against the live Railway URL
+curl -X POST https://pd-semantic-search-production.up.railway.app/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "luxury duplex with pool in Lagos"}'
+```
+
+---
+
+
+
 ## Database Setup
 
 Run these SQL statements in your Supabase **SQL Editor** in order:
@@ -401,8 +465,10 @@ This project auto-deploys to Railway on every push to `main`.
 pd-semantic-search/
 ├── server.js      # Express app — /search and /embed endpoints
 ├── seed.js        # One-time script to populate DB with embedded properties
+├── search.js      # CLI tool for testing searches locally
 ├── package.json
 ├── .env           # Local secrets (never committed)
+├── .env.example   # Template for required environment variables
 ├── .gitignore
 └── README.md
 ```
